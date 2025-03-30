@@ -13,11 +13,30 @@ Optimized DNS Forwarder for Docker with Dnsmasq.
 services:
   dnsmasq:
     container_name: dnsmasq
+    environment:
+      TZ: Europe/Berlin
     image: krautsalad/dnsmasq
     ports:
       - "53:53/udp"
     restart: unless-stopped
 ```
+
+*Note*: To prevent your DNS resolver from being open to all incoming traffic on port 53, drop all other traffic with iptables. For example:
+
+```
+/sbin/iptables -N DOCKER-USER
+/sbin/iptables -A DOCKER-USER -i eth0 -p tcp -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+/sbin/iptables -A DOCKER-USER -i eth0 -p udp -m conntrack --ctorigsrc 172.17.0.0/16 --ctorigdstport 53 -j ACCEPT
+/sbin/iptables -A DOCKER-USER -i eth0 -p udp -m conntrack --ctorigsrc 192.168.0.1 --ctorigdstport 53 -j ACCEPT
+/sbin/iptables -A DOCKER-USER -i eth0 -p udp -m conntrack --ctorigdstport 53 -j DROP
+/sbin/ip6tables -A INPUT -i eth0 -p udp --dport 53 -j DROP
+```
+
+Replace `192.168.0.1` with your host's IP address and `eth0` with your network interface name. Ensure these iptables rules are applied on every host reboot (using a startup script or an iptables persistence tool).
+
+### Environment Variables
+
+- `TZ`: Timezone setting (default: UTC).
 
 ## How it works
 
