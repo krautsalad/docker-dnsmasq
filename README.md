@@ -2,7 +2,7 @@
 
 Optimized DNS Forwarder for Docker with Dnsmasq.
 
-**docker-dnsmasq** is an Alpine-based Docker container running [Dnsmasq](https://dnsmasq.org/doc.html). The configuration disables local DNS caching and forwards all DNS requests to Docker's embedded DNS server. This setup allows Dnsmasq to resolve service names and other DNS records provided by Docker.
+**docker-dnsmasq** is an Alpine-based Docker container running [Dnsmasq](https://dnsmasq.org/doc.html). The configuration forwards all DNS requests to Docker's embedded DNS server. This setup allows Dnsmasq to resolve service names and other DNS records provided by Docker.
 
 ## Configuration
 
@@ -42,7 +42,6 @@ Replace `192.168.0.1` with your host's IP address and `eth0` with your network i
 
 Dnsmasq runs with a configuration that:
 
-- Disables caching: All DNS queries are forwarded without local caching.
 - Logs queries: Useful for debugging and monitoring DNS traffic.
 - Runs in the foreground: Ensuring it stays as the main container process.
 - Forwards to Docker's DNS: Uses the embedded Docker DNS server (127.0.0.11) to resolve container names.
